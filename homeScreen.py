@@ -72,11 +72,11 @@ class home:
         self.time_remaining_number.grid(row=1, column=3)
 
         # Buttons on the Home Screen
-        self.start_Button = tk.Button(self.window, text="START", bg="Green", command=self.__start, font=(None, self.fontsize))
+        self.start_Button = tk.Button(self.window, text="START", bg="Green", command=self.__start, font=(None, self.fontsize), activebackground="Green")
         self.start_Button.grid(row=0, column=0, padx=10, pady=10, columnspan=2)
         self.start_Button.config(height=7, width=21)
 
-        stop_Button = tk.Button(self.window, text="STOP", bg="Red", command=self.__stop, font=(None, self.fontsize))
+        stop_Button = tk.Button(self.window, text="STOP", bg="Red", command=self.__stop, font=(None, self.fontsize), activebackground="Red")
         stop_Button.grid(row=0, column=2, padx=10, pady=10, columnspan=2)
         stop_Button.config(height=7, width=21)
 
