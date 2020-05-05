@@ -20,14 +20,15 @@ class SettingLoad:
         self.window = tk.Tk()
         self.window.title("Setting the Load")
         self.window.config(bg="Blue")
+        self.window.geometry("700x500")
         self.right = True
 
         # Buttons
-        switch_button = tk.Button(self.window, text="Switch Cylinder", bg="Green", command=self.__switch)
-        switch_button.grid(row=0, column=0, ipadx=10, ipady=10, padx=5, pady=5)
+        switch_button = tk.Button(self.window, text="Switch Cylinder", bg="Green", command=self.__switch, activebackground="Green")
+        switch_button.grid(row=0, column=0, ipadx=20, ipady=20, padx=30, pady=50)
 
-        stop_button = tk.Button(self.window, text="STOP", bg = "red", command=self.__stop)
-        stop_button.grid(row=0, column=1, ipadx=10, ipady=10, padx=5, pady=5)
+        stop_button = tk.Button(self.window, text="STOP", bg = "red", command=self.__stop, activebackground="red")
+        stop_button.grid(row=0, column=1, ipadx=20, ipady=20, padx=30, pady=50)
 
         self.__switch()
         self.window.protocol("WM_DELETE_WINDOW", self.__stop)

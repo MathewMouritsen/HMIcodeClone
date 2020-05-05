@@ -17,6 +17,7 @@ class resetScreen:
         self.cycle_data = cycle
         self.window = tk.Tk()
         self.window.title("Set Cycle Count")
+        self.window.geometry("700x500")
         self.number_display = tk.Label(self.window, text=self.number_entry)
         self.number_display.grid(row=0, column=0, columnspan=3)
 
