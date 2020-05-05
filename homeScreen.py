@@ -81,8 +81,9 @@ class home:
         stop_Button.grid(row=0, column=2, padx=10, pady=10, columnspan=2)
         stop_Button.config(height=7, width=21)
 
-        emergency_stop_Button = tk.Button(self.window, text="Emergency Stop", bg="black", fg="red", font=(None, self.fontsize),command=self.__emergency_stop, activebackground="black")
-        emergency_stop_Button.grid(row=4, column=0, rowspan=2, ipady=10)
+        # If an emergency stop is needed, this can be uncommented, I believe there is no need for this.
+        # emergency_stop_Button = tk.Button(self.window, text="Emergency Stop", bg="black", fg="red", font=(None, self.fontsize),command=self.__emergency_stop, activebackground="black", activeforeground="Red")
+        # emergency_stop_Button.grid(row=4, column=0, rowspan=2, ipady=10)
 
         reset_Button = tk.Button(self.window, text="Cycle Settings", command=self.__reset_settings, font=(None, self.fontsize))
         reset_Button.grid(row=3, column=1, columnspan=2, ipadx=10, ipady=5)
