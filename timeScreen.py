@@ -2,6 +2,7 @@
 
 import tkinter as tk
 from Cycles import Data
+import platform
 
 class timeSet:
 
@@ -56,7 +57,10 @@ class timeSet:
 
         self.window = tk.Tk()
         self.window.title("Time Settings")
-        self.number_display = tk.Label(self.window, fg="red", text=self.number_entry)
+        self.window.geometry("700x500")
+        if platform.system() == "Linux":
+            self.window.config(cursor="none")
+        self.number_display = tk.Label(self.window, text=self.number_entry)
         self.number_display.grid(row=0, column=0, columnspan=3)
         
         keys = [

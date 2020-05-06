@@ -33,6 +33,7 @@ class home:
         # Data that helps control the cycles run and switch
         self.cycle_side = True
         self.previous_cycle_side = False
+        self.finish_update = True
 
         # Initializing the Main Window
         self.window = tk.Tk()
@@ -72,13 +73,17 @@ class home:
         self.time_remaining_number.grid(row=1, column=3)
 
         # Buttons on the Home Screen
-        self.start_Button = tk.Button(self.window, text="START", bg="Green", command=self.__start, font=(None, self.fontsize))
+        self.start_Button = tk.Button(self.window, text="START", bg="Green", command=self.__start, font=(None, self.fontsize), activebackground="Green")
         self.start_Button.grid(row=0, column=0, padx=10, pady=10, columnspan=2)
         self.start_Button.config(height=7, width=21)
 
-        stop_Button = tk.Button(self.window, text="STOP", bg="Red", command=self.__stop, font=(None, self.fontsize))
+        stop_Button = tk.Button(self.window, text="STOP", bg="Red", command=self.__stop, font=(None, self.fontsize), activebackground="Red")
         stop_Button.grid(row=0, column=2, padx=10, pady=10, columnspan=2)
         stop_Button.config(height=7, width=21)
+
+        # If an emergency stop is needed, this can be uncommented, I believe there is no need for this.
+        # emergency_stop_Button = tk.Button(self.window, text="Emergency Stop", bg="black", fg="red", font=(None, self.fontsize),command=self.__emergency_stop, activebackground="black", activeforeground="Red")
+        # emergency_stop_Button.grid(row=4, column=0, rowspan=2, ipady=10)
 
         reset_Button = tk.Button(self.window, text="Cycle Settings", command=self.__reset_settings, font=(None, self.fontsize))
         reset_Button.grid(row=3, column=1, columnspan=2, ipadx=10, ipady=5)
@@ -118,6 +123,8 @@ class home:
             self.__stop()
             mail.send()
             return
+        if self.finish_update:
+            self.__change_finish_date()
         if self.stagger:
            self.stagger_job = self.window.after(self.cycle_data.stagger_on, self.__pause)
            self.stagger = False
@@ -166,6 +173,14 @@ class home:
         self.finish_date = 0
         self.time_remaining_number.config(text="N/A")
         self.cycle_data.save()
+
+    def __emergency_stop(self):
+        self.out.off()
+        self.window.after_cancel(self.job)
+        self.cycle_data.save()
+        self.window.destroy()
+        self.window.quit()
+        home()
 
     def __pause(self):
         self.out.off()

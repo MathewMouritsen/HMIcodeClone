@@ -2,7 +2,7 @@
  # Stagger/Continuous runtime
  # Thump without waiting for an input or cycle switching when an input is detected
  # number pad to set the time the thumper runs and then pauses
- # and a button to revert back to the defauly settings
+ # and a button to revert back to the default settings
 
 import tkinter as tk
 from Cycles import Data
@@ -21,6 +21,7 @@ class Other:
         # Set up the window
         self.window = tk.Tk()
         self.window.title("Other Settings")
+        self.window.geometry("700x500")
 
         # Number pad for setting time on and off
         self.number_display = tk.Label(self.window, fg="red", text=self.number_entry)

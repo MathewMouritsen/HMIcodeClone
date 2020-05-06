@@ -1,6 +1,7 @@
 # This screen is to reset the cycle count and max cycle limit
 import tkinter as tk
 from Cycles import Data
+import platform
 
 class resetScreen:
 
@@ -16,8 +17,13 @@ class resetScreen:
         self.cycle_data = cycle
         self.window = tk.Tk()
         self.window.title("Set Cycle Count")
+        self.window.geometry("700x500")
         self.number_display = tk.Label(self.window, text=self.number_entry)
         self.number_display.grid(row=0, column=0, columnspan=3)
+
+        if platform.system() == "Linux":
+            self.window.config(cursor="none")
+        
 
         keys = [
             ['1', '2', '3'],    
