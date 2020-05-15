@@ -29,7 +29,7 @@ class resetScreen:
             ['1', '2', '3'],    
             ['4', '5', '6'],    
             ['7', '8', '9'],    
-           ['DEL', '0', '   '],    
+           ['DEL', '0', 'CLR'],    
         ]
 
         
@@ -39,7 +39,7 @@ class resetScreen:
             for y in range(0,3):
                 button = tk.Button(self.window, text=keys[x][y],  command=lambda num=keys[x][y] : self.__number(num))
                 button.grid(row = x + 1, column = y, ipadx=15, ipady=15)
-                if keys[x][y] == "DEL":
+                if keys[x][y] == "DEL" or keys[x][y] == "CLR":
                     button.grid(ipadx=8)
 
 # Labels that display current Cycle Values
@@ -59,8 +59,8 @@ class resetScreen:
         reset_limit = tk.Button(self.window, text="Set Limit", command=self.__limit)
         reset_limit.grid(row=3, column=3)
 
-        done_button = tk.Button(self.window, text="Done", command=self.__done_action)
-        done_button.grid(row=0, column=3, columnspan=2)
+        done_button = tk.Button(self.window, text="Done", command=self.__done_action, bg="Blue")
+        done_button.grid(row=5, column=5, columnspan=2, ipadx=20, ipady=15)
 
         reset_count = tk.Button(self.window, text="Set Count 0", command=self.__count_to_zero)
         reset_count.grid(row=3, column=4)
@@ -93,7 +93,7 @@ class resetScreen:
             else:
                 self.number_entry = self.number_entry[:-1]
     
-        elif x == "   ":
+        elif x == "CLR":
             self.number_entry = "0"
 
         else: # Number Entry

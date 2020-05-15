@@ -72,7 +72,7 @@ class Other:
         runtime_button.grid(row=1, column=5, padx=10, pady=5)
 
         revert_settings_button = tk.Button(self.window, text="Revert to Default Settings", command=self.__revert_settings)
-        revert_settings_button.grid(row=4 ,column=6, ipadx=10, ipady=5)
+        revert_settings_button.grid(row=4 ,column=5, ipadx=10, ipady=5)
 
         # Set time Buttons
         on_time_button = tk.Button(self.window, text="Set Time On", command=self.__set_time_on)
@@ -82,8 +82,8 @@ class Other:
         off_time_button.grid(row=3, column=6, padx=10, pady=5)
 
         #Done button
-        done_button = tk.Button(self.window, text="DONE", command=self.__quit_window)
-        done_button.grid(row=0, column=6, padx=10, pady=5)
+        done_button = tk.Button(self.window, text="DONE", command=self.__quit_window, bg="blue")
+        done_button.grid(row=5, column=6,columnspan=2, ipadx=20, ipady=15)
 
         self.window.protocol("WM_DELETE_WINDOW", self.__quit_window)
         self.window.mainloop()
