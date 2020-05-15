@@ -121,7 +121,7 @@ class home:
             self.__change_finish_date()
         if self.cycle_data.count >= self.cycle_data.max:
             self.__stop()
-            mail.send()
+            # mail.send() # This could be uncommented to send an email when the cycle limit is reached
             return
         if self.finish_update:
             self.__change_finish_date()
