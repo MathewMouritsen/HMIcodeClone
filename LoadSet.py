@@ -19,7 +19,6 @@ class SettingLoad:
         # Window
         self.window = tk.Tk()
         self.window.title("Setting the Load")
-        self.window.config(bg="Blue")
         self.window.geometry("700x500")
         self.right = True
 

@@ -99,8 +99,8 @@ class timeSet:
         extend_button = tk.Button(self.window, text="Set Extend", command=self.__extend)
         extend_button.grid(row=3, column=4)
 
-        done_button = tk.Button(self.window, text="Done", command=self.__done)
-        done_button.grid(row=0, column=3, columnspan=2)
+        done_button = tk.Button(self.window, text="Done", command=self.__done, bg="blue")
+        done_button.grid(row=5, column=3, columnspan=2, ipady=15, ipadx=20)
 
         self.window.protocol("WM_DELETE_WINDOW", self.__done)
         self.window.mainloop()
