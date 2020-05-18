@@ -23,14 +23,17 @@ class SettingLoad:
         self.right = True
 
         # Buttons
-        switch_button = tk.Button(self.window, text="Switch Cylinder", bg="Green", command=self.__switch, activebackground="Green")
+        switch_button = tk.Button(self.window, text="Switch Cylinder", command=self.__switch)
         switch_button.grid(row=0, column=0, ipadx=20, ipady=20, padx=30, pady=50)
 
-        stop_button = tk.Button(self.window, text="STOP", bg = "red", command=self.__stop, activebackground="red")
-        stop_button.grid(row=0, column=1, ipadx=20, ipady=20, padx=30, pady=50)
+        self.stop_button = tk.Button(self.window, text="OFF", bg = "red", command=self.__stop, activebackground="red")
+        self.stop_button.grid(row=0, column=1, ipadx=20, ipady=20, padx=30, pady=50)
+
+        done_button = tk.Button(self.window, text="DONE", bg="blue", command=self.__done, activebackground="blue")
+        done_button.grid(row=1, column=0, columnspan=2, ipady=20, ipadx=30)
 
         self.__switch()
-        self.window.protocol("WM_DELETE_WINDOW", self.__stop)
+        self.window.protocol("WM_DELETE_WINDOW", self.__done)
         self.window.mainloop()
 
     def __switch(self):
@@ -46,6 +49,13 @@ class SettingLoad:
     def __stop(self):
         # The stop button that shuts off the load and closes the window.
         self.out.off()
+        self.stop_button.config(command=self.__start, bg="green", activebackground="green", text="ON")
+
+    def __start(self):
+        self.right = self.right == False
+        self.__switch()
+        self.stop_button.config(command=self.__stop, bg="red", activebackground="red", text="OFF")
+    
+    def __done(self):
         self.window.destroy()
         self.window.quit()
-        
