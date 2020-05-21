@@ -6,6 +6,7 @@
 
 import tkinter as tk
 from Cycles import Data
+import platform
 
 class Other:
 
@@ -22,6 +23,13 @@ class Other:
         self.window = tk.Tk()
         self.window.title("Other Settings")
         self.window.geometry("800x500")
+
+        #Full Screen Settings
+        if platform.system() == "Linux":
+            self.is_fullscreen = True
+        else:
+            self.is_fullscreen = False
+        self.window.attributes("-fullscreen", self.is_fullscreen)
 
         # Number pad for setting time on and off
         self.number_display = tk.Label(self.window, fg="red", text=self.number_entry)

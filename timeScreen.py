@@ -58,6 +58,14 @@ class timeSet:
         self.window = tk.Tk()
         self.window.title("Time Settings")
         self.window.geometry("700x500")
+
+        #Fullscreen Setup
+        if platform.system() == "Linux":
+            self.is_fullscreen = True
+        else:
+            self.is_fullscreen = False
+        self.window.attributes("-fullscreen", self.is_fullscreen)
+
         if platform.system() == "Linux":
             self.window.config(cursor="none")
         self.number_display = tk.Label(self.window, text=self.number_entry)

@@ -6,12 +6,12 @@ from Cycles import Data
 from timeScreen import timeSet
 from otherSettingScreen import Other
 import platform
-if platform.system() == "Darwin" or platform.system() == "Windows":
-    import lapOut as outputs
-    import fakeSendMail as mail
-else:
+if platform.system() == "Linux":
     import piOut as outputs
     import sendMail as mail
+else:
+    import lapOut as outputs
+    import fakeSendMail as mail
 import LoadSet
 from datetime import datetime, timedelta
 
@@ -49,8 +49,11 @@ class home:
         # Miscellanies things to help the screen look better
         self.fontsize = 18
         self.is_fullscreen = True
-        if platform.system() != "Darwin" and platform.system() != "Windows":
+        if platform.system() == "Linux":
             self.window.config(cursor="none") #Hides the mouse when on the Pi
+            self.is_fullscreen = True
+        else:
+            self.is_fullscreen = False
         
         # Labels on main screen window
         cycle_count_text = tk.Label(self.window, text="Current Cycle Count", font=(None, self.fontsize))
@@ -103,8 +106,7 @@ class home:
         # Full Screen Settings
         self.window.bind("<Escape>", self.__close_fullscreen)
         self.window.bind("<F11>", self.__toggle_fullscreen)
-        if not platform.system() == "Windows":
-            self.window.attributes("-fullscreen", self.is_fullscreen)
+        self.window.attributes("-fullscreen", self.is_fullscreen)
         
         if self.cycle_data.mode == "Cycle":
             self.start_Button.config(command=self.__cycleStart)
@@ -155,12 +157,13 @@ class home:
                 self.out.off()
                 self.out.leftOn()
                 self.previous_cycle_side = self.cycle_side
-        
         self.job = self.window.after(1, self.__cycleStart)
+
 
     def __update_count(self):
         # Changes the display to the correct current cycle number
         self.cycle_count_number.config(text=self.cycle_data.count)
+
 
     def __stop(self):
         # Stops all actions
@@ -174,13 +177,16 @@ class home:
         self.time_remaining_number.config(text="N/A")
         self.cycle_data.save()
 
+
     def __emergency_stop(self):
+        # Stops all processes, closes the window, and then opens a new window
         self.out.off()
         self.window.after_cancel(self.job)
         self.cycle_data.save()
         self.window.destroy()
         self.window.quit()
         home()
+
 
     def __pause(self):
         self.out.off()
@@ -189,6 +195,7 @@ class home:
         self.stagger = True
         self.window.after(self.cycle_data.stagger_off, self.__start)
         self.cycle_data.save()
+
 
     def __reset_settings(self):
         # Opens the window to change the cycle count
@@ -199,17 +206,20 @@ class home:
         self.cycle_count_number.config(text=self.cycle_data.count)
         self.cycle_data.save()
 
+
     def __time_action(self):
         # Opens the window to change the time settings
         self.__stop()
         self.time_data.show()
         self.cycle_data.save()
-        # Not currently shown on main Screen
+        # No time information shown on main Screen
+
 
     def __close_fullscreen(self, Event=None):
         # Closes the Fullscreen when <ESC> is pressed
         self.is_fullscreen = False
         self.window.attributes("-fullscreen", self.is_fullscreen)
+
 
     def __toggle_fullscreen(self, Event):
         # Toggles fullscreen when <F11> is pressed
@@ -219,10 +229,12 @@ class home:
             self.is_fullscreen = True
         self.window.attributes("-fullscreen", self.is_fullscreen)
 
+
     def __load(self):
         # Shows the set Load screen
         self.__stop()
         self.load.show()
+
 
     def __cycle_inputs(self):
         # Is to be run behind the Cycle Start method that detects the inputs
@@ -233,6 +245,7 @@ class home:
         if self.sensing:
             self.window.after(1, self.__cycle_inputs)
     
+
     def __other_settings(self):
         # Opens the Other settings window
         self.__stop()
@@ -251,7 +264,8 @@ class home:
         self.cycle_limit_number.config(text=self.cycle_data.max)
         self.cycle_count_number.config(text=self.cycle_data.count)
         self.cycle_data.save()
-        
+
+
     def __calculate_time(self):
         # Returns the number of days left according to the extend and retract time.
         remaining = (self.cycle_data.retract_time + self.cycle_data.extend_time) * (self.cycle_data.max - self.cycle_data.count)
@@ -260,15 +274,14 @@ class home:
         finish = now + timedelta(seconds=remaining)
         self.finish_date = finish.strftime("%m/%d/%Y %H:%M")
         
+
     def __change_finish_date(self):
         self.__calculate_time()
         self.time_remaining_number.config(text=self.finish_date)
 
+
     def __nothing(self):
         pass
-
-    
-    
 
 
 test = home()

@@ -1,5 +1,8 @@
 # HMI code Information
 **Last Update: May 1, 2020**
+
+Run homeScreen.py to start the program
+
 ### File Functions
 #### homeScreen.py
 Runs the HMI program. The homescreen shows the cycle count and estimated finish time as well as start and stop buttons.
