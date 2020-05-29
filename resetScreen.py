@@ -22,6 +22,12 @@ class resetScreen:
         self.number_display.grid(row=0, column=0, columnspan=3)
 
         if platform.system() == "Linux":
+            self.is_fullscreen = True
+        else:
+            self.is_fullscreen = False
+        self.window.attributes("-fullscreen", self.is_fullscreen)
+
+        if platform.system() == "Linux":
             self.window.config(cursor="none")
         
 

@@ -22,6 +22,13 @@ class SettingLoad:
         self.window.geometry("700x500")
         self.right = True
 
+        # Fullscreen Settings
+        if platform.system() == "Linux":
+            self.is_fullscreen = True
+        else:
+            self.is_fullscreen = False
+        self.window.attributes("-fullscreen", self.is_fullscreen)
+
         # Buttons
         switch_button = tk.Button(self.window, text="Switch Cylinder", command=self.__switch)
         switch_button.grid(row=0, column=0, ipadx=20, ipady=20, padx=30, pady=50)
