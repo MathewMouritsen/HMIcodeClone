@@ -14,6 +14,8 @@ else:
     import fakeSendMail as mail
 import LoadSet
 from datetime import datetime, timedelta
+from time import time, sleep
+import math
 
 class home:
     def __init__ (self):
@@ -56,14 +58,17 @@ class home:
             self.is_fullscreen = False
         
         # Labels on main screen window
-        cycle_count_text = tk.Label(self.window, text="Current Cycle Count", font=(None, self.fontsize))
+        cycle_count_text = tk.Label(self.window, text="Cycle Count", font=(None, self.fontsize))
         cycle_count_text.grid(row=1, column=0)
 
         cycle_limit_text = tk.Label(self.window, text="Cycle Limit", font=(None, self.fontsize))
         cycle_limit_text.grid(row=2, column=0, pady=3)
 
         time_remaining_text = tk.Label(self.window, text="Estimated Finish", font=(None, self.fontsize))
-        time_remaining_text.grid(row=1, column=2)
+        time_remaining_text.grid(row=4, column=0)
+
+        cycle_rate_text = tk.Label(self.window, text="Cycle Rate", font = (None, self.fontsize))
+        cycle_rate_text.grid(row=3, column=0)
 
         # Labels that need to be accessed by methods to change the counts
         self.cycle_limit_number = tk.Label(self.window, text=self.cycle_data.max, font=(None, self.fontsize))
@@ -73,7 +78,10 @@ class home:
         self.cycle_count_number.grid(row=1, column=1, pady=3)
 
         self.time_remaining_number = tk.Label(self.window, text="N/A", font=(None, self.fontsize))
-        self.time_remaining_number.grid(row=1, column=3)
+        self.time_remaining_number.grid(row=4, column=1)
+
+        self.cycle_rate_number = tk.Label(self.window, text=self.cycle_data.cycle_rate, font=(None, self.fontsize))
+        self.cycle_rate_number.grid(row=3, column = 1)
 
         # Buttons on the Home Screen
         self.start_Button = tk.Button(self.window, text="START", bg="Green", command=self.__start, font=(None, self.fontsize), activebackground="Green")
@@ -88,20 +96,20 @@ class home:
         # emergency_stop_Button = tk.Button(self.window, text="Emergency Stop", bg="black", fg="red", font=(None, self.fontsize),command=self.__emergency_stop, activebackground="black", activeforeground="Red")
         # emergency_stop_Button.grid(row=4, column=0, rowspan=2, ipady=10)
 
+        other_settings_button = tk.Button(self.window, text="Other Settings", command=self.__other_settings, font=(None, self.fontsize))
+        other_settings_button.grid(row=5, column=0, columnspan=1, ipadx=10, ipady=5)
+
         reset_Button = tk.Button(self.window, text="Cycle Settings", command=self.__reset_settings, font=(None, self.fontsize))
-        reset_Button.grid(row=3, column=1, columnspan=2, ipadx=10, ipady=5)
+        reset_Button.grid(row=5, column=1, columnspan=1, ipadx=10, ipady=5)
 
         time_Button = tk.Button(self.window, text="Time Settings", command=self.__time_action, font=(None, self.fontsize))
-        time_Button.grid(row=4, column=1, columnspan=2, ipadx=10, ipady=5)
-
-        other_settings_button = tk.Button(self.window, text="Other Settings", command=self.__other_settings, font=(None, self.fontsize))
-        other_settings_button.grid(row=3, column=0, ipadx=10, ipady=5)
+        time_Button.grid(row=5, column=2, columnspan=1, ipadx=10, ipady=5)
 
         set_load_button = tk.Button(self.window, text="To Set Load", command=self.__load, font=(None, self.fontsize))
-        set_load_button.grid(row=2, column=3)
+        set_load_button.grid(row=2, column=2)
 
         end_fullscreen_button = tk.Button(self.window, text="ESC", command=self.__close_fullscreen, font=(None, self.fontsize))
-        end_fullscreen_button.grid(row=5, column=4)
+        end_fullscreen_button.grid(row=5, column=3)
 
         # Full Screen Settings
         self.window.bind("<Escape>", self.__close_fullscreen)
@@ -117,6 +125,11 @@ class home:
 
 # Commands that go with Buttons
     def __start(self):
+
+        # Values for the fail safe
+        self.cycle_data.time_since_last_start = 0
+        self.__get_cycle_rate()       
+
         # Start button for the thump test mode
         if self.cycle_data.count % 1000 == 0:
             self.cycle_data.save()
@@ -137,11 +150,17 @@ class home:
         self.out.leftOn()
         self.cycle_data.increment()
         self.__update_count()
+        self.__update_cycle_rate()
         self.job = self.window.after(self.cycle_data.retract_time, self.__start)
         
 
     def __cycleStart(self):
+
+
         # Start Command when the cycle mode is selected
+        self.cycle_data.time_since_last_start = 0
+        if self.cycle_data.count % 100 == 0:
+            self.__change_finish_date_cycle()
         if self.cycle_data.count >= self.cycle_data.max:
             self.__stop()
             return
@@ -150,6 +169,8 @@ class home:
                 self.previous_cycle_side = self.cycle_side
                 self.cycle_data.increment()
                 self.__update_count()
+                self.__get_cycle_rate()
+                self.__update_cycle_rate()
                 self.out.off()
                 self.out.rightOn()
         elif not self.cycle_side:
@@ -163,7 +184,10 @@ class home:
     def __update_count(self):
         # Changes the display to the correct current cycle number
         self.cycle_count_number.config(text=self.cycle_data.count)
-
+    
+    def __update_cycle_rate(self):
+        #Changes the display to the correct & current cycle rate
+        self.cycle_rate_number.config(text=self.cycle_data.cycle_rate)
 
     def __stop(self):
         # Stops all actions
@@ -244,7 +268,7 @@ class home:
             self.cycle_side = False
         if self.sensing:
             self.window.after(1, self.__cycle_inputs)
-    
+
 
     def __other_settings(self):
         # Opens the Other settings window
@@ -265,6 +289,20 @@ class home:
         self.cycle_count_number.config(text=self.cycle_data.count)
         self.cycle_data.save()
 
+    def __get_cycle_rate(self):
+
+        deltaTime = time() - float(self.cycle_data.timeOf_last_count)
+        old_cycle_rate = self.cycle_data.cycle_rate
+        self.cycle_data.cycle_rate = round(60/deltaTime, 2)
+        self.cycle_data.time_since_last_start += deltaTime
+        if old_cycle_rate == 0:
+            cycle_percentage = 0
+        else:
+            cycle_percentage = abs(1 - self.cycle_data.cycle_rate / old_cycle_rate)
+        if self.cycle_data.time_since_last_start > 180 and self.cycle_data.count % 10 == 0:
+            if cycle_percentage > 0.1:
+                self.__stop()
+        self.cycle_data.timeOf_last_count = time()
 
     def __calculate_time(self):
         # Returns the number of days left according to the extend and retract time.
@@ -273,15 +311,20 @@ class home:
         now = datetime.today()
         finish = now + timedelta(seconds=remaining)
         self.finish_date = finish.strftime("%m/%d/%Y %H:%M")
-        
+
 
     def __change_finish_date(self):
         self.__calculate_time()
         self.time_remaining_number.config(text=self.finish_date)
 
+    def __change_finish_date_cycle(self):
+        now = datetime.today()
+        remaining = ((self.cycle_data.max - self.cycle_data.count)/self.cycle_data.cycle_rate)*60
+        finish = now + timedelta(seconds = remaining)
+        self.finish_date = finish.strftime("%m/%d/%Y %H:%M")
+        self.time_remaining_number.config(text = self.finish_date)
 
     def __nothing(self):
         pass
-
 
 test = home()

@@ -1,7 +1,9 @@
 # Makes the Screen that lets us set the load
 
+import hx711example
 import tkinter as tk
 import platform
+from currentLoadScreen import CurrentLoad
 if platform.system() == "Darwin" or platform.system() == "Windows":
     import lapOut as outputs
 else:
@@ -12,10 +14,11 @@ class SettingLoad:
     def __init__(self, output):
         self.out = output
         self.right = True
-        self.window = "0" #Becomes window object first time show() is done 
+        self.window = "0" #Becomes window object first time show() is done
+        self.fontsize = 18
         
     def show(self):
-        
+
         # Window
         self.window = tk.Tk()
         self.window.title("Setting the Load")
@@ -29,7 +32,14 @@ class SettingLoad:
             self.is_fullscreen = False
         self.window.attributes("-fullscreen", self.is_fullscreen)
 
+        # # Label values that need to access functions to change the count
+        # self.current_load_number = tk.Label(self.window, text=self.current_load_number, font=(None, self.fontsize))
+        # self.current_load_number.grid(row=3, column=2, padx=30)
+
         # Buttons
+        current_load_button = tk.Button(self.window, text="Display Current Load", command=self.__display_load)
+        current_load_button.grid(row=2, column=0, ipadx=20, ipady=20, padx=30, pady=50)
+
         switch_button = tk.Button(self.window, text="Switch Cylinder", command=self.__switch)
         switch_button.grid(row=0, column=0, ipadx=20, ipady=20, padx=30, pady=50)
 
@@ -39,9 +49,19 @@ class SettingLoad:
         done_button = tk.Button(self.window, text="DONE", bg="blue", command=self.__done, activebackground="blue")
         done_button.grid(row=1, column=0, columnspan=2, ipady=20, ipadx=30)
 
+        # #Labels
+        #
+        # current_load = tk.Label(self.window, text="Current Load", font=(None, self.fontsize))
+        # current_load.grid(row=3, column=1, pady=30)
+
         self.__switch()
         self.window.protocol("WM_DELETE_WINDOW", self.__done)
         self.window.mainloop()
+
+    def __display_load(self):
+        # Displays the current load registered by the load cell
+        CurrentLoad()
+
 
     def __switch(self):
         # Switches the activated load from one side to the other.

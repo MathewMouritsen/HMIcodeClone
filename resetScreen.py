@@ -68,8 +68,11 @@ class resetScreen:
         done_button = tk.Button(self.window, text="Done", command=self.__done_action, bg="Blue")
         done_button.grid(row=5, column=5, columnspan=2, ipadx=20, ipady=15)
 
-        reset_count = tk.Button(self.window, text="Set Count 0", command=self.__count_to_zero)
-        reset_count.grid(row=3, column=4)
+        reset_count = tk.Button(self.window, text="Set Count to 0", command=self.__count_to_zero)
+        reset_count.grid(row=3, column=5)
+
+        set_count = tk.Button(self.window, text="Set Count", command=self.__set_count_to_value)
+        set_count.grid(row=3, column=4)
 
         # Common Cycle count values
         k500 = tk.Button(self.window, text="500 k", command= lambda : self.__common(500000))
@@ -124,9 +127,16 @@ class resetScreen:
         # Closes the window
         self.window.destroy()
         self.window.quit()
+        self.number_entry = 0
 
     def __count_to_zero(self):
         # Resets the cycle count to 0
         self.cycle_data.count = 0
+        self.cycle_count_number.config(text=self.cycle_data.count)
+    
+    def __set_count_to_value(self):
+        # Sets the count to specified value from number_entry
+        if self.number_entry.isdigit():
+            self.cycle_data.count = int(self.number_entry)
         self.cycle_count_number.config(text=self.cycle_data.count)
         

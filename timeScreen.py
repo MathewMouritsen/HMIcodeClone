@@ -26,6 +26,7 @@ class timeSet:
 
     def __done(self):
         # Done button that closes the window
+        self.number_entry = 0
         self.window.destroy()
         self.window.quit()
 
