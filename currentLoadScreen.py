@@ -4,15 +4,19 @@ import time
 import sys
 import tkinter as tk
 import platform
+
 if platform.system() == "Linux":
     import RPi.GPIO as GPIO
     from hx711 import HX711
+
     EMULATE_HX711 = False
 else:
     from emulated_hx711 import HX711
+
     EMULATE_HX711 = True
 
 referenceUnit = 2180
+
 
 class CurrentLoad:
 
@@ -49,10 +53,9 @@ class CurrentLoad:
         # Buttons
         go_button = tk.Button(self.window, text="GO", command=self.HX711main)
         go_button.grid(row=2, column=0, columnspan=2, ipady=20, ipadx=30)
-                
+
         done_button = tk.Button(self.window, text="DONE", bg="blue", command=self.__done, activebackground="blue")
         done_button.grid(row=2, column=4, columnspan=2, ipady=20, ipadx=30)
-        
 
         self.window.protocol("WM_DELETE_WINDOW", self.__done)
         self.window.mainloop()
@@ -91,7 +94,7 @@ class CurrentLoad:
             # print binary_string + " " + np_arr8_string
 
             # Prints the weight. Comment if you're debbuging the MSB and LSB issue.
-            val = round(hx.get_weight(5), 2)
+            val = round(hx.get_weight(5) - 10.35, 2)
             self.current_load_number.config(text=val)
             self.window.update()
 
