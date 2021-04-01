@@ -291,7 +291,7 @@ class home:
 
     def __get_cycle_rate(self):
 
-        deltaTime = time() - float(self.cycle_data.timeOf_last_count)
+        deltaTime = time() - float(self.cycle_data.time_of_last_count)
         old_cycle_rate = self.cycle_data.cycle_rate
         self.cycle_data.cycle_rate = round(60/deltaTime, 2)
         self.cycle_data.time_since_last_start += deltaTime
@@ -302,7 +302,7 @@ class home:
         if self.cycle_data.time_since_last_start > 180 and self.cycle_data.count % 10 == 0:
             if cycle_percentage > 0.1:
                 self.__stop()
-        self.cycle_data.timeOf_last_count = time()
+        self.cycle_data.time_of_last_count = time()
 
     def __calculate_time(self):
         # Returns the number of days left according to the extend and retract time.
