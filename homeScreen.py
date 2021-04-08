@@ -218,6 +218,7 @@ class home:
         self.finish_date = 0
         self.time_remaining_number.config(text="N/A")
         self.cycle_data.save()
+        self.hx.save()
 
 
     def __emergency_stop(self):

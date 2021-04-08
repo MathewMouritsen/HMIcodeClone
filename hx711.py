@@ -25,7 +25,12 @@ class HX711:
 
         # The value returned by the hx711 that corresponds to your reference
         # unit AFTER dividing by the SCALE.
-        self.REFERENCE_UNIT = 1
+        file = open("settings.txt", "r")
+        lines = file.readlines()
+        try:
+            self.REFERENCE_UNIT = lines[11]
+        except:
+            self.REFERENCE_UNIT = 1
         self.REFERENCE_UNIT_B = 1
 
         self.OFFSET = 1
@@ -421,6 +426,15 @@ class HX711:
     def reset(self):
         self.power_down()
         self.power_up()
+
+    # Save offset value in data so user will not need to tare again on restart
+    def save(self):
+        with open("settings.txt", "r") as file:
+            data = file.readlines()
+        data[11] = str(self.OFFSET)
+        with open("settings.txt", "w") as file:
+            file.writelines(data)
+
 
 
 # EOF - hx711.py
