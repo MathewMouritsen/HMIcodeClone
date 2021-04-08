@@ -33,7 +33,6 @@ class home:
         self.cycle_data = Data()
         self.finish_date = 0
         self.current_load_value = 0
-        self.referenceUnit = 2180
 
         # The subscreens are initialized so "show" can be called on them later
         self.reset_data = resetScreen(self.cycle_data)
@@ -58,7 +57,7 @@ class home:
         self.sensing = False
 
         # Miscellanies things to help the screen look better
-        self.fontsize = 18
+        self.fontsize = 16
         self.is_fullscreen = True
         if platform.system() == "Linux":
             self.window.config(cursor="none") #Hides the mouse when on the Pi
@@ -99,13 +98,13 @@ class home:
         self.current_load_number.grid(row=1, column=3, padx=5, pady=20)
 
         # Buttons on the Home Screen
-        self.start_Button = tk.Button(self.window, text="START", bg="Green", command=self.__start, font=(None, self.fontsize), activebackground="Green")
+        self.start_Button = tk.Button(self.window, text="START", bg="Green", command=self.__start, font=(None, 34), activebackground="Green", borderwidth=4)
         self.start_Button.grid(row=0, column=0, padx=10, pady=10, columnspan=2)
-        self.start_Button.config(height=7, width=21)
+        self.start_Button.config(height=3, width=9)
 
-        stop_Button = tk.Button(self.window, text="STOP", bg="Red", command=self.__stop, font=(None, self.fontsize), activebackground="Red")
+        stop_Button = tk.Button(self.window, text="STOP", bg="Red", command=self.__stop, font=(None, 34), activebackground="Red", borderwidth=4)
         stop_Button.grid(row=0, column=2, padx=10, pady=10, columnspan=2)
-        stop_Button.config(height=7, width=21)
+        stop_Button.config(height=3, width=9)
 
         # If an emergency stop is needed, this can be uncommented, I believe there is no need for this.
         # emergency_stop_Button = tk.Button(self.window, text="Emergency Stop", bg="black", fg="red", font=(None, self.fontsize),command=self.__emergency_stop, activebackground="black", activeforeground="Red")

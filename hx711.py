@@ -27,13 +27,12 @@ class HX711:
         # unit AFTER dividing by the SCALE.
         file = open("settings.txt", "r")
         lines = file.readlines()
-        try:
-            self.REFERENCE_UNIT = lines[11]
-        except:
-            self.REFERENCE_UNIT = 1
+        self.REFERENCE_UNIT = 2180
         self.REFERENCE_UNIT_B = 1
-
-        self.OFFSET = 1
+        try:
+            self.OFFSET = float(lines[11])
+        except:
+            self.OFFSET = 1
         self.OFFSET_B = 1
         self.lastVal = int(0)
 
@@ -431,7 +430,9 @@ class HX711:
     def save(self):
         with open("settings.txt", "r") as file:
             data = file.readlines()
-        data[11] = str(self.OFFSET)
+        try:
+            data[11] = str(self.OFFSET)
+        except: data.append(str(self.OFFSET))
         with open("settings.txt", "w") as file:
             file.writelines(data)
 
