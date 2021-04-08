@@ -9,27 +9,36 @@ import platform
 if platform.system() == "Linux":
     import piOut as outputs
     import sendMail as mail
+    import RPi.GPIO as GPIO
+    from hx711 import HX711
+    EMULATE_HX711 = False
 else:
     import lapOut as outputs
     import fakeSendMail as mail
+    from emulated_hx711 import HX711
+    EMULATE_HX711 = True
 import LoadSet
 from datetime import datetime, timedelta
 from time import time, sleep
 import math
+import sys
 
 class home:
     def __init__ (self):
         # Control the outputs and inputs initialized
         self.out = outputs.piControl(14, 15, 23, 24)
+        self.hx = HX711(5, 6)
 
         # The data and settings information is initialized
         self.cycle_data = Data()
         self.finish_date = 0
+        self.current_load_value = 0
+        self.referenceUnit = 2180
 
         # The subscreens are initialized so "show" can be called on them later
         self.reset_data = resetScreen(self.cycle_data)
         self.time_data = timeSet(self.cycle_data)
-        self.load = LoadSet.SettingLoad(self.out)
+        self.load = LoadSet.SettingLoad(self.out, self.hx)
         self.other_settings = Other(self.cycle_data)
 
         # Data that helps control the cycles run and switch
@@ -41,7 +50,7 @@ class home:
         self.window = tk.Tk()
         self.window.title("Data Home Screen")
 
-        
+
         # Jobs that need to be able to be cancelled in other methods
         self.job = self.window.after(0, self.__nothing)
         self.stagger = False
@@ -56,7 +65,7 @@ class home:
             self.is_fullscreen = True
         else:
             self.is_fullscreen = False
-        
+
         # Labels on main screen window
         cycle_count_text = tk.Label(self.window, text="Cycle Count", font=(None, self.fontsize))
         cycle_count_text.grid(row=1, column=0)
@@ -67,8 +76,11 @@ class home:
         time_remaining_text = tk.Label(self.window, text="Estimated Finish", font=(None, self.fontsize))
         time_remaining_text.grid(row=4, column=0)
 
-        cycle_rate_text = tk.Label(self.window, text="Cycle Rate", font = (None, self.fontsize))
+        cycle_rate_text = tk.Label(self.window, text="Cycle Rate", font=(None, self.fontsize))
         cycle_rate_text.grid(row=3, column=0)
+
+        current_load_text = tk.Label(self.window, text="Current Load", font=(None, self.fontsize))
+        current_load_text.grid(row=1, column=2)
 
         # Labels that need to be accessed by methods to change the counts
         self.cycle_limit_number = tk.Label(self.window, text=self.cycle_data.max, font=(None, self.fontsize))
@@ -81,7 +93,10 @@ class home:
         self.time_remaining_number.grid(row=4, column=1)
 
         self.cycle_rate_number = tk.Label(self.window, text=self.cycle_data.cycle_rate, font=(None, self.fontsize))
-        self.cycle_rate_number.grid(row=3, column = 1)
+        self.cycle_rate_number.grid(row=3, column=1)
+
+        self.current_load_number = tk.Label(self.window, text=self.current_load_value, font=(None, self.fontsize))
+        self.current_load_number.grid(row=1, column=3, padx=5, pady=20)
 
         # Buttons on the Home Screen
         self.start_Button = tk.Button(self.window, text="START", bg="Green", command=self.__start, font=(None, self.fontsize), activebackground="Green")
@@ -110,6 +125,9 @@ class home:
 
         end_fullscreen_button = tk.Button(self.window, text="ESC", command=self.__close_fullscreen, font=(None, self.fontsize))
         end_fullscreen_button.grid(row=5, column=3)
+
+        # Format grid
+        self.window.grid_columnconfigure(1, minsize=250)
 
         # Full Screen Settings
         self.window.bind("<Escape>", self.__close_fullscreen)
@@ -152,10 +170,10 @@ class home:
         self.__update_count()
         self.__update_cycle_rate()
         self.job = self.window.after(self.cycle_data.retract_time, self.__start)
-        
+        self.__display_load()
+
 
     def __cycleStart(self):
-
 
         # Start Command when the cycle mode is selected
         self.cycle_data.time_since_last_start = 0
@@ -323,6 +341,23 @@ class home:
         finish = now + timedelta(seconds = remaining)
         self.finish_date = finish.strftime("%m/%d/%Y %H:%M")
         self.time_remaining_number.config(text = self.finish_date)
+
+    def __display_load(self):
+        # Displays the current load registered by the load cell
+        val = round(self.hx.get_weight(5), 2)
+        self.current_load_number.config(text=val)
+        self.window.update()
+
+    def __tare(self):
+        self.hx.set_reading_format("MSB", "MSB")
+        self.hx.set_reference_unit(self.referenceUnit)
+        self.hx.reset()
+        self.hx.tare()
+        print("Tare done! Add weight now...")
+
+    def __done(self):
+        self.window.destroy()
+        self.window.quit()
 
     def __nothing(self):
         pass

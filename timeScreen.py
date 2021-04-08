@@ -32,6 +32,7 @@ class timeSet:
 
     def __number(self, x):
         # The command of each button when it is pressed
+        self.number_entry = str(self.number_entry)
         if x == "DEL":
             if self.number_entry == "0":
                 self.number_entry = "0"

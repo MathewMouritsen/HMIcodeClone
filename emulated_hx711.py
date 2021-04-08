@@ -38,7 +38,7 @@ class HX711:
 
 
         # Think about whether this is necessary.
-        time.sleep(1)
+        # time.sleep(1)
 
     def convertToTwosComplement24bit(self, inputValue):
        # HX711 has saturating logic.

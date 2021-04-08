@@ -40,7 +40,7 @@ class HX711:
         self.set_gain(gain)
 
         # Think about whether this is necessary.
-        time.sleep(1)
+        # time.sleep(1)
 
         
     def convertFromTwosComplement24bit(self, inputValue):
@@ -388,7 +388,7 @@ class HX711:
         GPIO.output(self.PD_SCK, False)
         GPIO.output(self.PD_SCK, True)
 
-        time.sleep(0.0001)
+        # time.sleep(0.0001)
 
         # Release the Read Lock, now that we've finished driving the HX711
         # serial interface.
@@ -404,7 +404,7 @@ class HX711:
         GPIO.output(self.PD_SCK, False)
 
         # Wait 100 us for the HX711 to power back up.
-        time.sleep(0.0001)
+        # time.sleep(0.0001)
 
         # Release the Read Lock, now that we've finished driving the HX711
         # serial interface.

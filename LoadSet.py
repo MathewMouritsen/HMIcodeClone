@@ -18,13 +18,13 @@ else:
 
 class SettingLoad:
 
-    def __init__(self, output):
+    def __init__(self, output, hx):
         self.out = output
         self.right = True
         self.window = "0" #Becomes window object first time show() is done
         self.fontsize = 18
         self.referenceUnit = 2180
-        self.hx = HX711(5, 6)
+        self.hx = hx
         
     def show(self):
 
