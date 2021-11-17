@@ -18,6 +18,8 @@ class Data:
         self.runtime = lines[5][:-1]
         self.stagger_on = int(lines[6])
         self.stagger_off = int(lines[7])
+        self.cycle_rate = float(lines[8])
+        self.timeOf_last_count = float(lines[9])
 
     def increment(self):
         # Increases the count of cycles by one.
@@ -34,6 +36,8 @@ class Data:
         file.write(self.runtime + "\n")
         file.write(str(self.stagger_on) + "\n")
         file.write(str(self.stagger_off) + "\n")
+        file.write(str(self.cycle_rate) + "\n")
+        file.write(str(self.timeOf_last_count) + "\n")
         file.close()
 
     def revert_default(self):
@@ -46,3 +50,5 @@ class Data:
         self.runtime = "Continuous"
         self.stagger_on = 900000
         self.stagger_off = 2700000
+        self.cycle_rate = 0
+        self.timeOf_last_count = 0
