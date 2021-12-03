@@ -25,6 +25,7 @@ class home:
         # The data and settings information is initialized
         self.cycle_data = Data()
         self.finish_date = 0
+        self.previous_cycle_rate = 0
 
         # The subscreens are initialized so "show" can be called on them later
         self.reset_data = resetScreen(self.cycle_data)
@@ -161,11 +162,16 @@ class home:
         if self.cycle_data.count >= self.cycle_data.max:
             self.__stop()
             return
+        if self.cycle_data.count % 10 == 0:
+            if self.cycle_data.cycle_rate > (self.previous_cycle_rate * 1.2) or self.cycle_data.cycle_rate < (self.previous_cycle_rate * 0.8):
+                self.__stop()
+                return
         if self.cycle_side:
             if not self.previous_cycle_side:
                 self.previous_cycle_side = self.cycle_side
                 self.cycle_data.increment()
                 self.__update_count()
+                self.previous_cycle_rate = self.cycle_data.cycle_rate
                 self.__get_cycle_rate()
                 self.__update_cycle_rate()
                 self.out.off()
