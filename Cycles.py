@@ -10,7 +10,13 @@ class Data:
             self.save()
             file = open("settings.txt", "r")
         lines = file.readlines()
-        self.max = int(lines[0])
+        try:
+            self.max = int(lines[0])
+        except:
+            self.revert_default()
+            self.save()
+            file = open("settings.txt", "r")
+            print(lines)
         self.count = int(lines[1])
         self.retract_time = int(lines[2])
         self.extend_time = int(lines[3])

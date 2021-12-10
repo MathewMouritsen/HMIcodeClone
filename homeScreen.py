@@ -26,6 +26,7 @@ class home:
         self.cycle_data = Data()
         self.finish_date = 0
         self.previous_cycle_rate = 0
+        self.cycles_since_last_start = 0
 
         # The subscreens are initialized so "show" can be called on them later
         self.reset_data = resetScreen(self.cycle_data)
@@ -159,19 +160,21 @@ class home:
         # Start Command when the cycle mode is selected
         if self.cycle_data.count % 100 == 0:
             self.__change_finish_date_cycle()
+        if self.cycle_data.count % 50 == 0:
+            self.cycle_data.save()
         if self.cycle_data.count >= self.cycle_data.max:
             self.__stop()
             return
-        if self.cycle_data.count % 10 == 0:
-            if self.cycle_data.cycle_rate > (self.previous_cycle_rate * 1.2) or self.cycle_data.cycle_rate < (self.previous_cycle_rate * 0.8):
-                self.__stop()
-                return
+        if self.cycle_data.cycle_rate > 70:
+            self.__stop()
+            return
+        print(self.cycle_data.cycle_rate)
+        print(self.previous_cycle_rate)
         if self.cycle_side:
             if not self.previous_cycle_side:
                 self.previous_cycle_side = self.cycle_side
                 self.cycle_data.increment()
                 self.__update_count()
-                self.previous_cycle_rate = self.cycle_data.cycle_rate
                 self.__get_cycle_rate()
                 self.__update_cycle_rate()
                 self.out.off()
@@ -194,6 +197,7 @@ class home:
 
     def __stop(self):
         # Stops all actions
+        self.cycles_since_last_start = 0
         self.out.off()
         self.window.after_cancel(self.job)
         self.cycle_side = True
@@ -202,6 +206,7 @@ class home:
         self.stagger = (self.cycle_data.runtime == "Stagger")
         self.finish_date = 0
         self.time_remaining_number.config(text="N/A")
+        self.cycle_data.cycle_rate = 0
         self.cycle_data.save()
 
 
