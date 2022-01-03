@@ -137,7 +137,7 @@ class home:
         if self.cycle_data.count >= self.cycle_data.max:
             self.__stop()
             print("it stopped in location 7")
-            print(cycle_data)
+            print(self.cycle_data)
             # mail.send() # This could be uncommented to send an email when the cycle limit is reached
             return
         if self.finish_update:
@@ -168,12 +168,12 @@ class home:
         if self.cycle_data.count >= self.cycle_data.max:
             self.__stop()
             print("it stopped in location 1")
-            print(cycle_data)
+            print(self.cycle_data)
             return
         if self.cycle_data.cycle_rate > 80:
             self.__stop()
             print("it stopped in location 2")
-            print(cycle_data)
+            print(self.cycle_data)
             return
         if self.cycle_side:
             if not self.previous_cycle_side:
@@ -239,7 +239,7 @@ class home:
         # The display is changed once the other window is closed
         self.__stop()
         print("it stopped in location 3")
-        print(cycle_data)
+        print(self.cycle_data)
         self.reset_data.show(self.cycle_data)
         self.cycle_limit_number.config(text=self.cycle_data.max)
         self.cycle_count_number.config(text=self.cycle_data.count)
@@ -250,7 +250,7 @@ class home:
         # Opens the window to change the time settings
         self.__stop()
         print("it stopped in location 4")
-        print(cycle_data)
+        print(self.cycle_data)
         self.time_data.show()
         self.cycle_data.save()
         # No time information shown on main Screen
@@ -275,7 +275,7 @@ class home:
         # Shows the set Load screen
         self.__stop()
         print("it stopped in location 5")
-        print(cycle_data)
+        print(self.cycle_data)
         self.load.show()
 
 
@@ -293,7 +293,7 @@ class home:
         # Opens the Other settings window
         self.__stop()
         print("it stopped in location 6")
-        print(cycle_data)
+        print(self.cycle_data)
         self.other_settings.show()
         if self.cycle_data.mode == "Thump":
             self.start_Button.config(command=self.__start)
