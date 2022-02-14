@@ -1,6 +1,7 @@
 # This runs the home screen 
 
 import tkinter as tk
+import tkinter.messagebox
 from resetScreen import resetScreen
 from Cycles import Data
 from timeScreen import timeSet
@@ -132,17 +133,18 @@ class home:
     def __start(self):
 
         self.__get_cycle_rate()
-        limit_switch_input_state = GPIO.input(18)
+        limit_switch_input_state = GPIO.input(26)
 
         # Start button for the thump test mode
         if self.cycle_data.count % 1000 == 0:
             self.cycle_data.save()
             self.__change_finish_date()
-        if limit_switch_input_state:
+        if not limit_switch_input_state:
             print('button pressed')
             self.__stop()
-            print("it stopped in location 6.5")
             print(self.cycle_data)
+            tkinter.messagebox.showinfo('Test Stopped','Test stopped. Reason: Limit switch was pressed.')
+            return
         if self.cycle_data.count >= self.cycle_data.max:
             self.__stop()
             print("it stopped in location 7")
@@ -181,7 +183,7 @@ class home:
             return
         if self.cycle_data.cycle_rate > 80:
             self.__stop()
-            print("it stopped in location 2")
+            tkinter.messagebox.showinfo('Test Stopped','Test stopped. Reason: Cycle rate too high.')
             print(self.cycle_data)
             return
         if self.cycle_side:
