@@ -9,6 +9,7 @@ import platform
 if platform.system() == "Linux":
     import piOut as outputs
     import sendMail as mail
+    import RPi.GPIO as GPIO
 else:
     import lapOut as outputs
     import fakeSendMail as mail
@@ -56,6 +57,8 @@ class home:
         if platform.system() == "Linux":
             self.window.config(cursor="none") #Hides the mouse when on the Pi
             self.is_fullscreen = True
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setup(26, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         else:
             self.is_fullscreen = False
         
@@ -128,12 +131,18 @@ class home:
 # Commands that go with Buttons
     def __start(self):
 
-        self.__get_cycle_rate()       
+        self.__get_cycle_rate()
+        limit_switch_input_state = GPIO.input(18)
 
         # Start button for the thump test mode
         if self.cycle_data.count % 1000 == 0:
             self.cycle_data.save()
             self.__change_finish_date()
+        if limit_switch_input_state:
+            print('button pressed')
+            self.__stop()
+            print("it stopped in location 6.5")
+            print(self.cycle_data)
         if self.cycle_data.count >= self.cycle_data.max:
             self.__stop()
             print("it stopped in location 7")
